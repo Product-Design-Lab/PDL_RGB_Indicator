@@ -1,1 +1,10 @@
-PDL_RGB_Indicator KEYWORD1
+# Syntax Highlighting for Arduino Library
+# https://www.arduino.cc/en/Hacking/LibraryTutorial
+
+RGB_Indicator	KEYWORD1
+Color_t	KEYWORD2
+Pattern_t	KEYWORD2
+setRGB	KEYWORD2
+setPattern	KEYWORD2
+setRampRate	KEYWORD2
+begin	KEYWORD2
