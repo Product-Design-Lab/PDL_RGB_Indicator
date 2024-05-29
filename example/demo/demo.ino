@@ -3,82 +3,94 @@
 #include "Adafruit_TinyUSB.h"
 
 // Define test pins
-const uint8_t TEST_PIN_R = 9;
-const uint8_t TEST_PIN_G = 10;
-const uint8_t TEST_PIN_B = 11;
+const uint8_t TEST_PIN_R = LED_RED;
+const uint8_t TEST_PIN_G = LED_GREEN;
+const uint8_t TEST_PIN_B = LED_BLUE;
 
 // Create an instance of RGB_Indicator
-RGB_Indicator rgbIndicator(TEST_PIN_R, TEST_PIN_G, TEST_PIN_B);
+RGB_Indicator led(TEST_PIN_R, TEST_PIN_G, TEST_PIN_B, false);
 
-void setup() {
-    Serial.begin(9600);
+void setup()
+{
+    Serial.begin(115200);
+    Serial.begin(115200);
 
     // Start the RGB_Indicator
-    rgbIndicator.begin();
+    led.begin();
+    Pattern_t myPattern;
+    Color_t myColor;
+    myColor.red = 128;
+    myColor.green = 234;
+    myColor.blue = 10;
 
-    // Run tests
-    testSetRGB();
-    testSetPattern();
-    testRampRate();
+    myPattern.entries[0].color = COLOR_RED;
+    myPattern.entries[0].duration = 100;
+    myPattern.entries[1].color = COLOR_GREEN;
+    myPattern.entries[1].duration = 100;
+    myPattern.entries[2].color = COLOR_BLUE;
+    myPattern.entries[2].duration = 100;
+    myPattern.entries[3].color = myColor;
+    myPattern.entries[3].duration = 1000;
+    myPattern.length = 4;
+    led.setPattern(myPattern);
 }
 
-void loop() {
-    // Nothing to do here
-}
+void loop()
+{
+    if(Serial.available())
+    {
+        char c = Serial.read();
+        Serial.printf("Received: %c\n", c);
+        if(c == 'r')
+        {
+            led.setPattern(RED_BLINK);
+            Serial.println("RED Blink");
+        }
+        else if(c == 'g')
+        {
+            led.setPattern(GREEN_BREATHING);
+            Serial.println("GREEN Blink");
+        }
+        else if(c == 'b')
+        {
+            led.setPattern(BLUE_BLINK);
+            Serial.println("BLUE Blink");
+        }
+        else if(c == 'y')
+        {
+            led.setPattern(YELLOW_BLINK);
+            Serial.println("YELLOW Blink");
+        }
+        else if(c == 'R')
+        {
+            led.setPattern(RED_CONST);
+        }
+        else if(c == 'G')
+        {
+            led.setPattern(GREEN_BREATHING);
+        }
+        else if(c == 'B')
+        {
+            led.setPattern(BLUE_CONST);
+        }
+        else if(c == 'Y')
+        {
+            led.setPattern(YELLOW_CONST);
+        }
+        else if(c == 'A')
+        {
+            led.setPattern(RAINBOW);
+        }
+        else{
+            led.setPattern(OFF);
+            Serial.println("OFF");
+        }
+    }
+    // led.setPattern(RED_BLINK);
+    // delay(4000);
+    // led.setPattern(GREEN_BLINK);
+    // delay(4000);
+    // led.setPattern(BLUE_BLINK);
+    delay(100);
 
-void testSetRGB() {
-    Serial.println("Testing setRGB...");
-
-    // Test setting RGB to red
-    rgbIndicator.setRGB(255, 0, 0);
-    delay(1000);
-
-    // Test setting RGB to green
-    rgbIndicator.setRGB(0, 255, 0);
-    delay(1000);
-
-    // Test setting RGB to blue
-    rgbIndicator.setRGB(0, 0, 255);
-    delay(1000);
-
-    // Test setting RGB to a custom color
-    Color_t customColor = {128, 64, 32};
-    rgbIndicator.setRGB(customColor);
-    delay(1000);
-
-    Serial.println("setRGB test completed.");
-}
-
-void testSetPattern() {
-    Serial.println("Testing setPattern...");
-
-    // Test setting the RED_BLINK pattern
-    rgbIndicator.setPattern(RED_BLINK);
-    delay(3000);
-
-    // Test setting the RAINBOW pattern
-    rgbIndicator.setPattern(RAINBOW);
-    delay(3000);
-
-    // Test setting the OFF pattern
-    rgbIndicator.setPattern(OFF);
-    delay(1000);
-
-    Serial.println("setPattern test completed.");
-}
-
-void testRampRate() {
-    Serial.println("Testing setRampRate...");
-
-    // Test setting a fast ramp rate
-    rgbIndicator.setRampRate(5);
-    rgbIndicator.setPattern(GREEN_BREATHING);
-    delay(3000);
-
-    // Test setting a slow ramp rate
-    rgbIndicator.setRampRate(100);
-    rgbIndicator.setPattern(GREEN_BREATHING);
-    delay(3000);
-
-    Serial.println("setRampRate test completed.");
 }
